@@ -1,0 +1,371 @@
+------------------------------------------------------------------------------------------------------
+-- CREACIÓN DE TABLAS - DESCRIBE - ALL TABLES - DROP TABLE
+------------------------------------------------------------------------------------------------------
+
+-- VER LAS TABLAS DE LA BASE DE DATOS
+SELECT * FROM ALL_TABLES;
+
+-- CREAR UNA TABLA
+CREATE TABLE usuarios (
+    nombre varchar2(10),
+    clave varchar2(10)
+);
+
+-- VER LA ESTRUCTURA DE LA TABLA
+DESCRIBE usuarios;
+
+-- ELIMINAR UNA TABLA
+DROP TABLE usuarios;
+
+-- CONSULTA QUE PERMITE VER LA CLAVE PRIMARIA DE CADA TABLA DE LA BDD
+SELECT uc.table_name, column_name 
+FROM user_cons_columns ucc
+JOIN user_constraints uc
+on ucc.constraint_name = uc.constraint_name 
+where uc.constraint_type = 'P' 
+
+
+
+
+
+-- TIPOS DE DATOS ALFANÚMERICOS
+
+------------------------------------
+-- CHAR(x)
+------------------------------------
+-- Define una cadena de caracteres de longitud fija
+-- si se define 10, usa 10 espacios de memoria, aunque se utilice menos
+-- conveniente si el datos es invariable de longitud
+-- Su rango es de 1 a 2000 caracteres
+
+------------------------------------
+-- VARCHAR2(x)
+------------------------------------
+-- Define una cadena de caracteres variable
+-- Sólo usará lo que necesita
+-- Su rango es de 1 a 4000
+
+------------------------------------
+-- nchar(x)
+------------------------------------
+-- Es similar a char pero permite almacenar caracteres ASCII, EBCDIC y Unicode
+-- su rango va de 1 a 1000
+
+
+------------------------------------
+-- nvarchar(x)
+------------------------------------
+-- es similar a varchar excepto que permite almacenar valores UNICODE
+-- su rango va de 1 a 2000
+
+------------------------------------
+-- CLOB y NCLOB
+------------------------------------
+-- Pueden almacenar hasta 128 terabytes de datos de caracteres en la base de datos
+
+------------------------------------
+-- BLOB
+------------------------------------
+-- Puede almacenar hasta 128 terabytes de datos binarios (imagenes, videos, sonidos etc)
+
+
+
+-- TIPOS DE DATOS NÚMERICOS
+
+------------------------------------
+-- NUMBER(t,d)
+------------------------------------
+-- Permite almacenar valores enteros o decimales, positivos o negativos
+-- el parametro t indica el numero total de digitos (contando los decimales) que tendrá el numero
+-- d indica el máximo de numeros decimales (escala)
+
+------------------------------------------------------------------------
+-- BINARY_FLOAT o BINARY_DOUBLE
+------------------------------------------------------------------------
+-- Permite guardar números que necesitten una mayor precisión
+
+
+
+-- FUNCIONES STRING
+
+--Creamos la tabla:
+
+create table libros(
+  codigo number(5),
+  titulo varchar2(40) not null,
+  autor varchar2(20) default 'Desconocido',
+  editorial varchar2(20),
+  precio number(6,2),
+  cantidad number(3)
+ );
+ 
+-- Ingresamos algunos registros:
+
+ insert into libros
+   values(1,'El aleph','Borges','Emece',25,100);
+ insert into libros
+  values(2,'Java en 10 minutos','Mario Molina','Siglo XXI',50.40,100);
+ insert into libros
+  values(3,'Alicia en el pais de las maravillas','Lewis Carroll','Emece',15.50,200);
+ insert into libros
+  values(4,'El pais de las hadas',default,'Emece',25.50,150);
+
+-- Mostramos sólo los 12 primeros caracteres de los títulos de los libros y sus autores, empleando la función "substr":
+select substr(titulo,1,12) as titulo
+from libros;
+  
+-- Mostramos sólo los 20 primeros caracteres de los títulos de los libros y rellenando los espacios restantes con "*", empleando la función "rpad":
+select rpad(titulo,20,'*') as titulo
+from libros;
+
+-- Mostramos los títulos de los libros empleando la función "initcap":
+select initcap(titulo) as titulo
+from libros;
+-- Note que cada palabra comienza con mayúsculas.
+-- Mostramos los títulos de los libros y sus autores en mayúsculas:
+
+select titulo,upper(autor) as autor
+from libros;
+-- Concatenamos título y autor empleando "concat":
+
+select concat(titulo,autor)
+from libros;
+
+-- Mostramos el título y el precio de todos los libros concatenando el signo "$" a los precios:
+select titulo,concat('$ ',precio) as precio
+from libros;
+
+-- Recuperamos el título y editorial de "libros" reemplazando "Emece" por "Sudamericana":
+
+select titulo,replace(editorial,'Emece','Sudamericana')
+from libros;
+
+-- Recuperamos el autor de todos los libros reemplazando las letras "abc" por "ABC" respectivamente (empleando "translate"):
+select translate(autor,'abc','ABC') from libros; 
+-- Note que cada caracter individual es reemplazado por el especificado.
+
+-- Mostramos la posición de la primera ocurrencia de la cadena "pais" en los títulos de los libros:
+select instr(titulo,'pais') from libros;
+-- Note que los títulos que no contienen la subcadena "pais" muestran el valor cero.
+
+select * from libros;
+
+-- Funciones matemáticas
+
+-- Creamos la tabla:
+
+create table empleados(
+legajo number(5),
+documento char(8) not null,
+nombre varchar2(30) not null,
+domicilio varchar2(30),
+sueldo number(6,2),
+hijos number(2),
+primary key (legajo)
+);
+
+-- Ingresamos algunos registros:
+
+insert into empleados
+values(1,'22333444','Ana Acosta','Avellaneda 213',870.79,2);
+insert into empleados
+values(20,'27888999','Betina Bustos','Bulnes 345',950.85,1);
+insert into empleados
+values(31,'30111222','Carlos Caseres','Caseros 985',1190,0);
+insert into empleados
+values(39,'33444555','Daniel Duarte','Dominicana 345',1250.56,3);
+-- Vamos a mostrar los sueldos de los empleados redondeando el valor hacia abajo y luego hacia arriba (empleamos "floor" y "ceil"):
+
+select floor(sueldo) as "sueldo hacia abajo",
+ceil(sueldo) as "sueldo hacia arriba"
+from empleados;
+--Mostramos los nombre de cada empleado, su respectivo sueldo, y el sueldo redondeando el valor a entero ("round") y truncado a entero ("trunc"):
+
+select nombre, sueldo, round(sueldo) as "sueldo redondeado",
+trunc(sueldo) as "sueldo truncado"
+from empleados;
+--Note que los valores devueltos según la función empleada, son diferentes.
+
+--Mostramos el resultado de "2 elevado a la potencia 5" ("power"):
+
+select power(2,5) from dual;
+--Retorna el valor 32.
+
+--Mostramos el resto de la división "1234 / 5" ("mod"):
+
+select mod(1234,5) from dual;
+--Devuelve el valor 4.
+
+-- Calculamos la raíz cuadrada de 81:
+
+select sqrt(81) from dual;
+-- Retorna 9.
+
+-- Funciones para fechas
+
+drop table libros;
+
+create table libros(
+titulo varchar2(40) not null,
+autor varchar2(20) default 'Desconocido',
+editorial varchar2(20),
+edicion date,
+precio number(6,2)
+);
+
+insert into libros values('El aleph','Borges','Emece','10/10/1980',25.33);
+insert into libros values('Java en 10 minutos','Mario Molina','Siglo XXI','05/05/2000',50.65);
+insert into libros
+values('Alicia en el pais de las maravillas','Lewis Carroll','Emece','08/09/2000',19.95);
+insert into libros values('Aprenda PHP','Mario Molina','Siglo XXI','02/04/2000',45);
+
+select titulo, extract (year from edicion) from libros;
+
+select titulo, extract (month from edicion) from libros;
+
+select titulo, extract(year from sysdate)-extract(year from edicion) as "años de editado"
+from libros;
+
+select titulo from libros
+where extract(year from edicion)=2000;
+
+select add_months(sysdate,3) from dual;
+
+select next_day(sysdate,'martes') from dual;
+
+select last_day('24/08/2018') from dual;
+
+select months_between(sysdate, to_Date('02/07/2022')) from dual;
+
+select current_date from dual;
+
+select current_timestamp from dual;
+
+select to_date('24/08/2018')+15 from dual;
+
+select to_date('12/08/2018')-20 from dual;
+
+
+
+
+-- CLAVE PRIMARIA COMPUESTA
+-- Un consultorio médico en el cual trabajan 3 médicos registra las consultas de los pacientes en una tabla llamada "consultas".
+-- 1- Elimine la tabla:
+
+  drop table consultas;
+-- 2- La tabla contiene los siguientes datos:
+
+/*
+  - fechayhora: date not null, fecha y hora de la consulta,
+  - medico: varchar2(30), not null, nombre del médico (Perez,Lopez,Duarte),
+  - documento: char(8) not null, documento del paciente,
+  - paciente: varchar2(30), nombre del paciente,
+  - obrasocial: varchar2(30), nombre de la obra social (IPAM,PAMI, etc.).
+3- Setee el formato de "date" para que nos muestre día, mes, año, hora y minutos:
+
+*/
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY HH24:MI';
+-- 4- Un médico sólo puede atender a un paciente en una fecha y hora determinada. En una fecha y hora determinada, varios médicos atienden a distintos pacientes. Cree la tabla definiendo una clave primaria compuesta:
+
+ create table consultas(
+  fechayhora date not null,
+  medico varchar2(30) not null,
+  documento char(8) not null,
+  paciente varchar2(30),
+  obrasocial varchar2(30),
+  primary key(fechayhora,medico)
+ );
+
+-- 4- Ingrese varias consultas para un mismo médico en distintas horas el mismo día:
+
+
+ insert into consultas
+  values ('05/11/2006 8:00','Lopez','12222222','Acosta Betina','PAMI');
+ insert into consultas
+  values ('05/11/2006 8:30','Lopez','23333333','Fuentes Carlos','PAMI');
+-- 5- Ingrese varias consultas para diferentes médicos en la misma fecha y hora:
+
+ insert into consultas
+  values ('05/11/2006 8:00','Perez','34444444','Garcia Marisa','IPAM');
+ insert into consultas
+  values ('05/11/2006 8:00','Duarte','45555555','Pereyra Luis','PAMI');
+
+-- 6- Intente ingresar una consulta para un mismo médico en la misma hora el mismo día (mensaje de error)
+
+-- 7- Intente cambiar la hora de la consulta de "Acosta Betina" por una no disponible ("8:30") (error)
+
+-- 8- Cambie la hora de la consulta de "Acosta Betina" por una disponible ("9:30")
+
+-- 9- Ingrese una consulta para el día "06/11/2006" a las 10 hs. para el doctor "Perez"
+
+-- 10- Recupere todos los datos de las consultas de "Lopez" (3 registros)
+
+-- 11- Recupere todos los datos de las consultas programadas para el "05/11/2006 8:00" (2 registros)
+
+-- 12- Muestre día y mes de todas las consultas de "Lopez"
+
+ insert into consultas
+  values ('05/11/2006 8:00','Lopez','12222222','Acosta Betina','PAMI');
+ insert into consultas
+  values ('05/11/2006 8:30','Lopez','23333333','Fuentes Carlos','PAMI');
+
+ insert into consultas
+  values ('05/11/2006 8:00','Perez','34444444','Garcia Marisa','IPAM');
+ insert into consultas
+  values ('05/11/2006 8:00','Duarte','45555555','Pereyra Luis','PAMI');
+
+ insert into consultas
+  values ('05/11/2006 8:00','Perez','25555555','Mercado Marcos','PAMI');
+
+ update consultas set fechayhora='05/11/2006 8:30' where paciente='Acosta Betina';
+
+ update consultas set fechayhora='05/11/2006 9:30' where paciente='Acosta Betina';
+
+ insert into consultas
+  values ('06/11/2006 10:00','Lopez','25555555','Mercado Marcos','PAMI');
+
+ select *from consultas
+  where medico='Lopez';
+
+ select *from consultas
+  where fechayhora='05/11/2006 8:00';
+
+ select extract(day from fechayhora) as dia,
+  extract(month from fechayhora) as mes
+  from consultas
+  where medico='Lopez';
+  
+  
+  
+  
+-- INTEGRIDAD DE LOS DATOS
+
+-- NOT NULL A NIVEL DE CAMPO
+-- PRIMARY KEY : A NIVEL DE TABLA. ES UN CAMPO O VARIOS QUE IDENTIFICAN CADA REGISTRO DE UNA TABLA
+-- FOREIGN KEY: A NIVEL DE TABLA. ESTABLECE QUE UN CAMPO (O VARIOS) SE RELACIONE UNA CLAVE PRIMARIA DE UNA TABLA CON OTRA
+-- CHECK: A NIVEL DE TABLA. RESTRINGUE LOS VALORES QUE PUEDEN INGRESARSE EN UN CAMPO ESPECIFICO.
+-- UNIQUE: A NIVEL DE TABLA. 
+
+-- SE PUEDEN CREAR, MODIFICAR Y ELIMINAR LAS RESTRICCIONES SIN ELIMINAR LA TABLA Y VOLVER A CREARLA
+
+
+-- restricciones (VALIDATE - NOVALIDATE -  ENABLE - DISABLE)
+
+
+----------------------------------------------------
+-- INDICES
+----------------------------------------------------
+-- Permite localizar registros rápidamente
+
+
+
+
+----------------------------------------------------
+-- COMBINACIONES
+----------------------------------------------------
+
+-- 1) INTERNAS (INNER JOIN)
+-- 2) EXTERNAS (LEFT JOIN - RIGHT JOIN - FULL JOIN)
+-- 3) CRUZADAS (CROSS JOIN)
+-- 4) AUTO COMBINACIÓN
